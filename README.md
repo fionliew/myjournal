@@ -1,1 +1,382 @@
-# myjournal
+[journal.html](https://github.com/user-attachments/files/29436157/journal.html)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Daily Journal</title>
+    <style>
+        :root {
+            --primary: #7952b3;
+            --primary-light: #efe9f7;
+            --bg: #f3f0ff; /* Soft Purple Background */
+            --card-bg: #ffffff;
+            --text: #332941;
+            --border: #e2d9f3;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        .journal-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(121, 82, 179, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14.5px;
+            box-sizing: border-box;
+            resize: vertical;
+            font-family: inherit;
+            color: var(--text);
+            background-color: #faf9fe;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(121, 82, 179, 0.15);
+            background-color: #fff;
+        }
+
+        /* Emoji Selection Styling */
+        .emoji-group {
+            display: flex;
+            justify-content: space-between;
+            max-width: 320px;
+            font-size: 2.2rem;
+            margin-top: 5px;
+            background: #faf9fe;
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .emoji-btn {
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+            user-select: none;
+            filter: grayscale(80%);
+            opacity: 0.5;
+        }
+
+        .emoji-btn:hover {
+            transform: scale(1.15);
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+
+        .emoji-btn.selected {
+            filter: grayscale(0%);
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        button.submit-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(121, 82, 179, 0.2);
+        }
+
+        button.submit-btn:hover {
+            background-color: #633fa3;
+        }
+
+        button.submit-btn:active {
+            transform: scale(0.99);
+        }
+
+        /* History Logs & Privacy Lock Layout */
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .entries-title {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--text);
+        }
+
+        .lock-btn {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .lock-btn:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Privacy Blur Mechanism */
+        .entries-wrapper {
+            transition: filter 0.3s ease;
+        }
+
+        .entries-wrapper.locked {
+            filter: blur(8px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .entry-item {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(121, 82, 179, 0.02);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--primary);
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .entry-date {
+            font-weight: 700;
+            color: #6e5d80;
+            font-size: 14px;
+        }
+
+        .entry-emoji {
+            font-size: 1.8rem;
+        }
+
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #a395b8;
+            margin: 14px 0 4px 0;
+            font-weight: 700;
+        }
+
+        .entry-text {
+            margin: 0;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            font-size: 14.5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>My Daily Journal</h1>
+    </header>
+
+    <div class="journal-card">
+        <form id="journalForm">
+            <div class="form-group">
+                <label for="routine">1. My Daily Routine</label>
+                <textarea id="routine" rows="4" placeholder="What did you do today? Describe your day..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>2. How are you feeling?</label>
+                <div class="emoji-group">
+                    <span class="emoji-btn" onclick="selectEmoji('😊', this)">😊</span>
+                    <span class="emoji-btn" onclick="selectEmoji('😎', this)">😎</span>
+                    <span class="emoji-btn" onclick="selectEmoji('😴', this)">😴</span>
+                    <span class="emoji-btn" onclick="selectEmoji('😔', this)">😔</span>
+                    <span class="emoji-btn" onclick="selectEmoji('😡', this)">😡</span>
+                </div>
+                <input type="hidden" id="selectedEmotion" value="😊">
+            </div>
+
+            <div class="form-group">
+                <label for="proudThings">3. Proud Moments / Good Things / Firsts</label>
+                <textarea id="proudThings" rows="3" placeholder="What made you proud today? Any new things you tried?" required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Save Entry</button>
+        </form>
+    </div>
+
+    <div class="history-header">
+        <h2 class="entries-title">Past Entries</h2>
+        <button id="privacyBtn" class="lock-btn" onclick="togglePrivacy()">Unlock Past Entries</button>
+    </div>
+    
+    <div id="entriesContainer" class="entries-wrapper locked"></div>
+</div>
+
+<script>
+    // CONFIGURATION: Set your journal privacy password here
+    const JOURNAL_PASSWORD = "1234"; 
+    let isUnlocked = false;
+
+    // Set default selected emoji on load
+    document.querySelector('.emoji-btn').classList.add('selected');
+
+    function selectEmoji(emoji, element) {
+        document.querySelectorAll('.emoji-btn').forEach(btn => btn.classList.remove('selected'));
+        element.classList.add('selected');
+        document.getElementById('selectedEmotion').value = emoji;
+    }
+
+    // Privacy Control (Password Protection)
+    function togglePrivacy() {
+        const container = document.getElementById('entriesContainer');
+        const btn = document.getElementById('privacyBtn');
+
+        if (!isUnlocked) {
+            // Ask for password
+            const attempt = prompt("Enter your password to view past entries:");
+            if (attempt === JOURNAL_PASSWORD) {
+                isUnlocked = true;
+                container.classList.remove('locked');
+                btn.textContent = "Lock Past Entries";
+                btn.style.background = "#ffebf0";
+                btn.style.color = "#e53e3e";
+                btn.style.borderColor = "#fed7d7";
+            } else if (attempt !== null) {
+                alert("Incorrect password. Access denied.");
+            }
+        } else {
+            // Re-lock
+            isUnlocked = false;
+            container.classList.add('locked');
+            btn.textContent = "Unlock Past Entries";
+            btn.style.background = "var(--primary-light)";
+            btn.style.color = "var(--primary)";
+            btn.style.borderColor = "var(--border)";
+        }
+    }
+
+    // Handle Form Submission
+    document.getElementById('journalForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const routine = document.getElementById('routine').value;
+        const emotion = document.getElementById('selectedEmotion').value;
+        const proudThings = document.getElementById('proudThings').value;
+        const date = new Date().toLocaleDateString('en-US', { 
+            weekday: 'short', 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+
+        const entry = { date, routine, emotion, proudThings };
+
+        let entries = JSON.parse(localStorage.getItem('journalEntries')) || [];
+        entries.unshift(entry);
+        localStorage.setItem('journalEntries', JSON.stringify(entries));
+
+        // Reset inputs
+        document.getElementById('journalForm').reset();
+        selectEmoji('😊', document.querySelector('.emoji-btn'));
+
+        // Refresh view
+        displayEntries();
+    });
+
+    // Display Entries
+    function displayEntries() {
+        const container = document.getElementById('entriesContainer');
+        const entries = JSON.parse(localStorage.getItem('journalEntries')) || [];
+
+        if (entries.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#a395b8; margin-top:20px;">No entries yet. Start writing today!</p>';
+            return;
+        }
+
+        container.innerHTML = entries.map(entry => `
+            <div class="entry-item">
+                <div class="entry-header">
+                    <div class="entry-date">${entry.date}</div>
+                    <div class="entry-emoji">${entry.emotion}</div>
+                </div>
+                <div>
+                    <div class="section-title">Daily Routine</div>
+                    <p class="entry-text">${entry.routine}</p>
+                </div>
+                <div>
+                    <div class="section-title">Proud Moments & Wins</div>
+                    <p class="entry-text">${entry.proudThings}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Initial load
+    displayEntries();
+</script>
+
+</body>
+</html>
